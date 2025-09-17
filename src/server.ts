@@ -27,23 +27,8 @@ const fastify = Fastify({
   },
   bodyLimit: 50 * 1024 * 1024, 
 });
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:5173', 
-  'http://localhost:5174',
-  'http://84.32.214.55',
-  'http://84.32.214.55:5173',
-  'http://84.32.214.55:5174'
-];
-
 await fastify.register(cors, {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'), false);
-    }
-  },
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 });
