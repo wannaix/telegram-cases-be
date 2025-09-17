@@ -11,16 +11,12 @@ export class ImageService {
     if (relativePath.startsWith('http://') || relativePath.startsWith('https://')) {
       return relativePath;
     }
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://telegram-cases-be.onrender.com'
-      : `http://localhost:${config.PORT}`;
+    const baseUrl = process.env.BASE_URL || `http://localhost:${config.PORT}`;
     const path = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
     return `${baseUrl}${path}`;
   }
   static getDefaultCaseImage(): string {
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://telegram-cases-be.onrender.com'
-      : `http://localhost:${config.PORT}`;
+    const baseUrl = process.env.BASE_URL || `http://localhost:${config.PORT}`;
     return `${baseUrl}/temporary-case-image.png`;
   }
   static async imageExists(relativePath: string): Promise<boolean> {
