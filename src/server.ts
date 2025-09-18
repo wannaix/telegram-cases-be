@@ -49,12 +49,7 @@ await fastify.register(fastifyStatic, {
 await fastify.register(fastifyStatic, {
   root: path.join(process.cwd(), "uploads"),
   prefix: "/uploads/",
-  decorateReply: false,
-  setHeaders: (res, pathname) => {
-    if (pathname.endsWith('.webp')) {
-      res.setHeader('Cache-Control', 'public, max-age=31536000');
-    }
-  }
+  decorateReply: false 
 });
 fastify.decorate("authenticate", authenticate);
 await fastify.register(authRoutes, { prefix: "/api/auth" });

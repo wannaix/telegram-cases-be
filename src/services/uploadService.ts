@@ -1,7 +1,6 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { randomUUID } from 'crypto';
-import sharp from 'sharp';
 export class LocalUploadService {
   private uploadDir = 'uploads/cases';
   private publicPath = '/uploads/cases';
@@ -17,18 +16,10 @@ export class LocalUploadService {
   }
   async uploadImage(buffer: Buffer, originalFileName: string): Promise<string> {
     try {
-      const fileName = `${randomUUID()}.webp`;
+      const fileExtension = path.extname(originalFileName).toLowerCase();
+      const fileName = `${randomUUID()}${fileExtension}`;
       const filePath = path.join(this.uploadDir, fileName);
-      
-      const optimizedBuffer = await sharp(buffer)
-        .resize(800, 600, { 
-          fit: 'inside',
-          withoutEnlargement: true
-        })
-        .webp({ quality: 85 })
-        .toBuffer();
-        
-      await fs.writeFile(filePath, optimizedBuffer);
+      await fs.writeFile(filePath, buffer);
       const publicUrl = `${this.publicPath}/${fileName}`;
       return publicUrl;
     } catch (error) {
