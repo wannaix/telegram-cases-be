@@ -320,13 +320,11 @@ export async function publicAdminRoutes(fastify: FastifyInstance) {
 
       const buffer = await data.toBuffer();
       const filename = `case_${Date.now()}_${data.filename}`;
-      const imagePath = await localUploadService.saveImage(buffer, filename, 'cases');
-      const imageUrl = ImageService.getImageUrl(imagePath);
+      const imageUrl = await localUploadService.uploadImage(buffer, data.filename);
 
       return { 
         success: true, 
-        imageUrl,
-        imagePath 
+        imageUrl
       };
     } catch (error: any) {
       console.error("Error uploading image:", error);
