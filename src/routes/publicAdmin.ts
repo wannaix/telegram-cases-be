@@ -318,7 +318,7 @@ export async function publicAdminRoutes(fastify: FastifyInstance) {
         return reply.status(400).send({ error: "No file uploaded" });
       }
 
-      const buffer = await data.file.toBuffer();
+      const buffer = await data.toBuffer();
       const filename = `case_${Date.now()}_${data.filename}`;
       const imagePath = await localUploadService.saveImage(buffer, filename, 'cases');
       const imageUrl = ImageService.getImageUrl(imagePath);
