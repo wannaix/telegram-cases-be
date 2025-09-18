@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { randomUUID } from 'crypto';
+import sharp from 'sharp';
 export class LocalUploadService {
   private uploadDir = 'uploads/cases';
   private publicPath = '/uploads/cases';
@@ -16,12 +17,19 @@ export class LocalUploadService {
   }
   async uploadImage(buffer: Buffer, originalFileName: string): Promise<string> {
     try {
-      const fileExtension = path.extname(originalFileName).toLowerCase();
-      const fileName = `${randomUUID()}${fileExtension}`;
+      const fileName = `${randomUUID()}.webp`;
       const filePath = path.join(this.uploadDir, fileName);
-      await fs.writeFile(filePath, buffer);
+      
+      const optimizedBuffer = await sharp(buffer)
+        .resize(800, 600, { 
+          fit: 'inside',
+          withoutEnlargement: true
+        })
+        .webp({ quality: 85 })
+        .toBuffer();
+        
+      await fs.writeFile(filePath, optimizedBuffer);
       const publicUrl = `${this.publicPath}/${fileName}`;
-      console.log(`Local upload completed: ${originalFileName} -> ${publicUrl}`);
       return publicUrl;
     } catch (error) {
       console.error('Local upload error:', error);
@@ -33,7 +41,6 @@ export class LocalUploadService {
       const fileName = path.basename(imageUrl);
       const filePath = path.join(this.uploadDir, fileName);
       await fs.unlink(filePath);
-      console.log('Local file deleted:', filePath);
       return true;
     } catch (error) {
       console.error('Local delete error:', error);
