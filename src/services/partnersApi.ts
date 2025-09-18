@@ -150,7 +150,7 @@ class PartnersApiService {
   } = {}): Promise<{ results: NFTMetadata[] }> {
     try {
       const response = await axios.get(
-        `${PARTNERS_API_URL}/partners/market/actions/`,
+        `${PARTNERS_API_URL}/partners/nfts/search`,
         {
           params: {
             limit: 20,
