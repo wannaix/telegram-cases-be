@@ -39,7 +39,7 @@ await fastify.register(jwt, {
 await fastify.register(websocket);
 await fastify.register(multipart, {
   limits: {
-    fileSize: 10 * 1024 * 1024, 
+    fileSize: 50 * 1024 * 1024, 
   }
 });
 await fastify.register(fastifyStatic, {
