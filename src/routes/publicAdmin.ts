@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma.js";
 import { z } from "zod";
 import { localUploadService } from "../services/uploadService.js";
+import { ImageService } from "../services/imageService.js";
 export async function publicAdminRoutes(fastify: FastifyInstance) {
   fastify.get("/cases", async (request, reply) => {
     try {
@@ -309,6 +310,30 @@ export async function publicAdminRoutes(fastify: FastifyInstance) {
     } catch (error: any) {
       console.error("Error deleting case image:", error);
       return reply.status(400).send({ error: error.message || "Failed to delete image" });
+    }
+  });
+  
+  fastify.post("/upload-image", async (request, reply) => {
+    try {
+      const data = await request.file();
+      
+      if (!data) {
+        return reply.status(400).send({ error: "No file uploaded" });
+      }
+
+      const buffer = await data.file.toBuffer();
+      const filename = `case_${Date.now()}_${data.filename}`;
+      const imagePath = await localUploadService.saveImage(buffer, filename, 'cases');
+      const imageUrl = ImageService.getImageUrl(imagePath);
+
+      return { 
+        success: true, 
+        imageUrl,
+        imagePath 
+      };
+    } catch (error: any) {
+      console.error("Error uploading image:", error);
+      return reply.status(500).send({ error: error.message || "Failed to upload image" });
     }
   });
 }
